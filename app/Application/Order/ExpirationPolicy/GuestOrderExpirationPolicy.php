@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Order\Expiration;
+namespace App\Application\Order\ExpirationPolicy;
 
 use App\Domain\OrderAggregate\Ports\OrderExpirationPolicy;
 use DateInterval;

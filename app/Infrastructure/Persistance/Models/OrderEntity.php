@@ -7,7 +7,6 @@ use App\Domain\OrderAggregate\PaymentMethod;
 use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str as SupportStr;
 
 /**
  * @property string $id
@@ -15,7 +14,7 @@ use Illuminate\Support\Str as SupportStr;
  * @property float    $total_amount
  * @property string $reference
  * @property OrderState $state
- * @property DateTimeImmutable $expiresAt
+ * @property DateTimeImmutable $expires_at
  * @property PaymentMethod $payment_method
  * @property DateTimeImmutable $created_at
  * @property DateTimeImmutable $updated_at
@@ -46,7 +45,10 @@ class OrderEntity extends Model
 
     protected $casts = [
         'payment_method' => PaymentMethod::class,
-        'state' => OrderState::class
+        'state' => OrderState::class,
+        'expires_at' => 'immutable_datetime',
+        'created_at' => 'immutable_datetime',
+        'updated_at' => 'immutable_datetime'
     ];
     
     /**

@@ -39,8 +39,6 @@ class Order implements IAggregateRoot
     )
     {
         // invariants
-        if ($expiresAt <= new DateTimeImmutable()) throw new OrderExpirationTimeViolated($createdDate, $expiresAt);
-        if($customerId === null || !Uuid::isValid($customerId->getId())) throw new CustomerNotFoundException();
         if($state === OrderState::PENDING && !$orderNumber) throw new ReferenceUndefinedException($id);
         if($state === OrderState::PENDING && !$totalAmount) throw new TotalAmountViolationException($id);
         if($state === OrderState::PENDING && !$paymentMethod) throw new PaymentMethodUndefinedException($id);
@@ -54,5 +52,10 @@ class Order implements IAggregateRoot
         $this->lastModifiedDate = $lastModifiedDate;
         $this->state = $state;
         $this->expiresAt = $expiresAt;
+    }
+
+    public function isExpired(DateTimeImmutable $now) : void {
+        if($this->state === OrderState::DRAFT && $this->expiresAt <= $now)
+            $this->state = OrderState::EXPIRED;
     }
 }

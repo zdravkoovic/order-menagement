@@ -19,4 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withEvents(discover: [
         __DIR__.'/../app/Application/Events/Handlers',
+    ])
+    ->withCommands([
+        __DIR__.'/../app/Infrastructure/Console/Commands'
     ])->create();

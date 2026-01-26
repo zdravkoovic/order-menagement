@@ -2,17 +2,24 @@
 
 namespace App\Infrastructure\Messaging\Bus\Middlewares;
 
-use App\Application\Abstraction\ICommand;
-use App\Application\Bus\ICommandMiddleware;
-use App\Application\Command\CommandResult;
+use App\Application\Abstraction\Bus\IMiddleware;
+use App\Application\Abstraction\IAction;
 use Illuminate\Support\Facades\DB;
 
-final class TransactionMiddleware implements ICommandMiddleware
+final class TransactionMiddleware implements IMiddleware
 {
-    public function handle(ICommand $command, callable $next): CommandResult
-    {
-        return DB::transaction(function () use ($next, $command) {
-            return $next($command);
-        });
+    /** @param ICommand $command */
+    public function handle(IAction $command, callable $next): ?array
+    {   
+        DB::beginTransaction();
+
+        try {
+            $result = $next($command);
+            DB::commit();
+            return $result;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 }

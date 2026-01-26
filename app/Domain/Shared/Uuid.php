@@ -12,7 +12,7 @@ final class Uuid implements JsonSerializable
 
     private function __construct(string $value)
     {
-        $this->value = strtolower($value);
+        $this->value = $value;
     }
 
     public static function fromString(string $value) : self
@@ -47,6 +47,6 @@ final class Uuid implements JsonSerializable
 
     public static function isValid(Uuid $uuid) : bool
     {
-        return Str::isUuid($uuid);
+        return Str::isUuid($uuid->value);
     }
 }

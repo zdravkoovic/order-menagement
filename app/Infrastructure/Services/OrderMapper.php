@@ -9,8 +9,9 @@ use App\Domain\OrderAggregate\OrderBuilder;
 use App\Domain\OrderAggregate\OrderId;
 use App\Domain\OrderAggregate\OrderNumber;
 use App\Domain\OrderAggregate\OrderState;
-use App\Domain\OrderAggregate\PaymentMethod;
 use App\Infrastructure\Persistance\Models\OrderEntity;
+
+use function Laravel\Prompts\info;
 
 class OrderMapper
 {
@@ -19,7 +20,6 @@ class OrderMapper
         $order = $data->state === OrderState::DRAFT->value
             ? OrderBuilder::draft()
             : OrderBuilder::pending();
-        
         return $order
                     ->forCustomer(CustomerId::fromString($data->customer_id))
                     ->withId(OrderId::fromString($data->id))

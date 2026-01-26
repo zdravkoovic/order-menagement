@@ -2,51 +2,65 @@
 
 namespace App\Infrastructure\Messaging\Bus\Middlewares;
 
-use App\Application\Abstraction\ICommand;
-use App\Application\Bus\ICommandMiddleware;
-use App\Application\Command\CommandResult;
+use App\Application\Abstraction\Bus\IMiddleware;
+use App\Application\Abstraction\IAction;
+use App\Application\Errors\ApplicationException;
+use App\Domain\Shared\Uuid;
+use App\Infrastructure\Errors\InfrastructureExceptions;
+use DomainException;
 use Psr\Log\LoggerInterface;
 
-final class LoggingMiddleware implements ICommandMiddleware
+final class LoggingMiddleware implements IMiddleware
 {
     public function __construct(
         private LoggerInterface $logger
     ){}
 
-    public function handle(ICommand $command, callable $next): CommandResult
+    public function handle(IAction $action, callable $next): ?array
     {
         $ctx = array_merge([
-            'command' => $command,
-            'commandId' => $command->commandId(),
-        ], $command->toLogContext());
+            'command' => class_basename($action),
+        ], $action->toLogContext());
 
-        $this->logger->info('Dispatching command', $ctx);
+        $this->logger->info("Dispatching command \n", $ctx);
 
         try {
-            /** @var CommandResult $result */
-            $result = $next($command);
-        } catch (\Throwable $e) {
-            $this->logger->error('command.exception', array_merge($ctx, [
-                'exception' => get_class($e),
-                'message' => $e->getMessage()
+            /** @var ?Uuid $result */
+            $result = $next($action);
+
+            $logResult = [
+                "status" => true,
+                "result" => $result
+            ];
+
+            $this->logger->info('Operation ' . class_basename($action) . ' completed', array_merge($ctx, ['result' => $logResult]));
+
+            return $result;
+
+        } catch(DomainException $domain) {
+            $this->logger->warning(class_basename($action) . " failed \n", array_merge(
+                $ctx, 
+                [ 'exception' => ['class' => class_basename($domain), 'message' => $domain->getMessage()]
+            ]));
+            throw $domain;
+        } catch(InfrastructureExceptions $infra) {
+            $this->logger->warning(class_basename($action) . " failed \n", array_merge([
+                $ctx,
+                ['exception' => ['class' => class_basename($infra), 'message' => $infra->getMessage()]]
+            ]));
+            throw $infra;
+        } catch (ApplicationException $app) {
+            $this->logger->warning(class_basename($action) . " failed \n", array_merge([
+                $ctx,
+                ['exception' => ['class' => class_basename($app), 'message' => $app->getMessage()]]
+            ]));
+            throw $app;
+        } 
+        catch (\Throwable $e) {
+            $this->logger->error(class_basename($action) . " failed unexpectedly \n", array_merge($ctx, [
+                'exception' => ['class' => $e::class, 'message' => $e->getMessage(), 'stack' => app()->isLocal() ? $e->getTraceAsString() : null]
             ]));
             throw $e;
         }
-
-        $logResult = is_object($result) ? $this->flattenResult($result) : $result;
-
-        $this->logger->info('command.completed', array_merge($ctx, ['result' => $logResult]));
-
-        return $result;
-    }
-
-    /** @param CommandResult $result */
-    private function flattenResult($result): array
-    {
-        return [
-            'success' => $result->success ?? false,
-            'id' => $result->id ?? null,
-            'error_code' => $result->appError->code ?? null
-        ];
     }
 }

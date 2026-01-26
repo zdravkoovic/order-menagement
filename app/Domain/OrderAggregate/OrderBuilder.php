@@ -2,10 +2,9 @@
 
 namespace App\Domain\OrderAggregate;
 
-use DateTime;
 use DateTimeImmutable;
-use DateTimeZone;
-use DomainException;
+
+use function Laravel\Prompts\info;
 
 final class OrderBuilder
 {
@@ -19,7 +18,7 @@ final class OrderBuilder
     private ?DateTimeImmutable $updatedAt = null;
     private ?OrderId $id = null;
 
-    public function __construct(){}
+    private function __construct(){}
 
     public static function draft() : self
     {
@@ -81,7 +80,7 @@ final class OrderBuilder
         return $this;
     }
 
-    public function withLastModifiedTime(DateTimeImmutable $updatedAt): self
+    public function withLastModifiedTime(?DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
         return $this;
@@ -89,6 +88,8 @@ final class OrderBuilder
 
     public function build(): Order
     {    
+        
+
         return new Order(
             $this->customerId,
             $this->state,

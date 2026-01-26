@@ -2,10 +2,9 @@
 
 namespace App\Application\Abstraction;
 
-use App\Application\Command\CommandResult;
 use App\Domain\Shared\Uuid;
 
 interface ICommandHandler
 {
-    public function Handle(ICommand $command) : CommandResult;
+    public function handle(ICommand $command) : Uuid | null;
 }

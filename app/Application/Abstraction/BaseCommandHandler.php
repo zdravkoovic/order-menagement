@@ -2,24 +2,20 @@
 
 namespace App\Application\Abstraction;
 
-use App\Application\Command\CommandResult;
 use App\Domain\IAggregateRoot;
+use App\Domain\Shared\Uuid;
 
 abstract class BaseCommandHandler implements ICommandHandler
 {
     public function __construct(
-        private IDomainEventDispatcher $domainEventDispatcher
+        // private IDomainEventDispatcher $domainEventDispatcher
     ){}
 
-    public function Handle(ICommand $command) : CommandResult
+    public function handle(ICommand $command) : Uuid | null
     {
         $result = $this->Execute($command);
 
-        if(!$result instanceof CommandResult) {
-            throw new \LogicException('Execute() must return CommandResult');
-        }
-
-        if(!$result->success) {
+        if($result) {
             $this->ClearAggregateState();
             return $result;
         }
@@ -29,14 +25,14 @@ abstract class BaseCommandHandler implements ICommandHandler
         {
             foreach($aggregate->PopDomainEvents() as $event)
             {
-                $this->domainEventDispatcher->Dispatch($event);
+                // $this->domainEventDispatcher->Dispatch($event);
             }
         }
 
         return $result;
     }
 
-    protected abstract function Execute(ICommand $command) : CommandResult;
+    protected abstract function Execute(ICommand $command) : Uuid | null;
     protected abstract function GetAggregateRoot() : IAggregateRoot | null;
     protected abstract function ClearAggregateState() : void;
 }

@@ -2,26 +2,24 @@
 
 namespace App\Domain\OrderAggregate;
 
-use Illuminate\Support\Str;
-
 final class OrderNumber 
 {
-    private string $value;
+    private ?string $value;
 
-    private function __construct(string $value)
+    private function __construct(?string $value)
     {
         $this->value = $value;
     }
 
-    public static function fromString(string $reference) : ?self
+    public static function fromString(?string $reference) : ?self
     {
-        if(Str::empty($reference)) {
+        if($reference || $reference === '') {
             return null;
         }
         return new self($reference);
     }
 
-    public function value() : string
+    public function value() : ?string
     {
         return $this->value;
     }

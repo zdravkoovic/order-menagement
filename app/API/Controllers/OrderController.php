@@ -3,18 +3,18 @@
 namespace App\API\Controllers;
 
 use App\API\Http\Requests\CreateOrderRequest;
-use App\Application\Bus\ICommandBus;
-use App\Application\Errors\Contracts\ErrorTranslator;
+use App\Application\Abstraction\Bus\ICommandBus;
+use App\Application\Abstraction\Bus\IQueryBus;
 use App\Application\Order\Commands\CreateOrder\CreateOrderCommand;
-use DomainException;
+use App\Application\Order\Queries\GetOrder\ById\GetOrderByIdQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class OrderController
 {
     public function __construct(
-        private ICommandBus $bus,
-        private ErrorTranslator $translator
+        private ICommandBus $commandBus,
+        private IQueryBus $queryBus
     ){}
 
     /**
@@ -39,13 +39,10 @@ class OrderController
         );
 
         try {
-            $result = $this->bus->dispatch($command);
-        } catch (DomainException $e) {
-            $appError = $this->translator->translate($e);
-
-            return response()->json($appError, $appError->httpStatus);
-        } 
-        catch (\Throwable $e) {
+            $result = $this->commandBus->dispatch($command);
+            if($result->success) return response()->json(['order_id' => $result->data], $result->httpStatus);
+            return response()->json(['error' => $result->appError->message], $result->appError->httpStatus);
+        } catch (\Throwable $e) {
             Log::critical('unhandled.command.exception', [
                 'exception' => get_class($e), 
                 'message' => $e->getMessage(),
@@ -53,8 +50,6 @@ class OrderController
             ]);
             throw $e;
         }
-
-        return response()->json(['order_id' => $result->id], 201);
     }
 
     /**
@@ -62,7 +57,13 @@ class OrderController
      */
     public function show(string $id)
     {
-        //
+        try {
+            $result = $this->queryBus->dispatch(new GetOrderByIdQuery($id));
+            if($result->success) return response()->json($result->data, $result->httpStatus);
+            return response()->json($result->data, $result->httpStatus);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**

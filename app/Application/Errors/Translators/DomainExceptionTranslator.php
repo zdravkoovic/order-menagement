@@ -1,49 +1,39 @@
 <?php
 
-namespace App\Application\Errors;
+namespace App\Application\Errors\Translators;
 
-use App\Application\Errors\Contracts\ErrorTranslator;
-use App\Domain\OrderAggregate\Errors\CustomerNotFoundException;
+use App\Application\Errors\ApplicationException;
+use App\Application\Errors\Messages\UserErrorMessage;
 use App\Domain\OrderAggregate\Errors\OrderExpirationTimeViolated;
 use App\Domain\OrderAggregate\Errors\PaymentMethodUndefinedException;
 use App\Domain\OrderAggregate\Errors\ReferenceUndefinedException;
 use App\Domain\OrderAggregate\Errors\TotalAmountViolationException;
 use Throwable;
 
-final class DomainToAppErrorTranslator implements ErrorTranslator
+final class DomainExceptionTranslator 
 {
-    public function translate(Throwable $e): ?AppError
+    public static function translate(Throwable $e): ?UserErrorMessage
     {
         return match (true) {
             $e instanceof PaymentMethodUndefinedException => 
-                new AppError(
-                    'ORDER.MISSING_PAYMENT',
+                new UserErrorMessage(
                     'Payment method is required to complete your order.',
                     422
                 ),
             $e instanceof TotalAmountViolationException => 
-                new AppError(
-                    'ORDER.TOTAL_AMOUNT_ZERO',
+                new UserErrorMessage(
                     'You must have at least one ordered product to be able to order.',
                     422
                 ),
             $e instanceof OrderExpirationTimeViolated =>
-                new AppError(
-                    'ORDER.EXPIRED',
+                new UserErrorMessage(
                     'Your order is expired. Create new one.',
                     409
                 ),
             $e instanceof ReferenceUndefinedException => 
-                new AppError(
-                    'ORDER.REFERENCE_MISSING',
+                new UserErrorMessage(
                     'Order reference is missing and the operation cannot be completed.',
                     422
-                ),
-            $e instanceof CustomerNotFoundException => 
-                new AppError(
-                    'CUSTOMER.CUSTOMER_NOT_FOUND',
-                    'Customer not found.',
-                    404
                 ),
             default => null,
         };
