@@ -2,12 +2,8 @@
 
 namespace Tests\Feature\API;
 
-use App\Domain\OrderAggregate\PaymentMethod;
 use App\Domain\Shared\Uuid;
 use App\Infrastructure\Persistance\Models\OrderEntity;
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
-use DateTimeImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -32,12 +28,10 @@ final class OrderApiTest extends TestCase
 
         $response->assertStatus(201);
         
-        $expiresAt = OrderEntity::first()->expires_at;
-        $this->assertTrue(
-            $expiresAt->between(
-                now()->addMinutes(30)->subSeconds(5),
-                now()->addMinutes(30)->addSeconds(5)
-            ),
+        $order = OrderEntity::first();
+        $this->assertEquals(
+            $order->expires_at->timestamp,
+            $order->created_at->addMinutes(30)->timestamp
         );
 
         $this->assertDatabaseHas('order_entities', ['state' => 'DRAFT']);
