@@ -17,6 +17,7 @@ use App\Infrastructure\Errors\InfrastructureExceptions;
 use DomainException;
 use LogicException;
 
+use function Laravel\Prompts\info;
 
 final class CommandBus implements ICommandBus
 {

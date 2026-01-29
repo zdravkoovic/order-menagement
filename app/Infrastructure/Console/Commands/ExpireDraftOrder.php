@@ -6,6 +6,8 @@ use App\Application\Abstraction\Bus\ICommandBus;
 use App\Application\Order\Commands\ExpireDraftOrder\ExpireDraftOrderCommand;
 use Illuminate\Console\Command;
 
+use function Laravel\Prompts\info;
+
 class ExpireDraftOrder extends Command
 {
     /**

@@ -5,8 +5,8 @@ namespace Test\Feature\Persistance;
 use App\Domain\Shared\Uuid;
 use App\Infrastructure\Persistance\Models\OrderEntity;
 use App\Infrastructure\Persistance\Models\OrderlineEntity;
-use Database\Factories\OrderlineEntityFactory;
 use Illuminate\Database\QueryException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -61,18 +61,15 @@ class OrderPersistanceTest extends TestCase
 
     public function test_duplicate_draft_order_is_prevented_by_db()
     {
+        $this->expectException(UniqueConstraintViolationException::class);
         $customerId = Uuid::generate();
         OrderEntity::factory()->create([
             'customer_id' => $customerId
         ]);
         
-        try {
-            OrderEntity::factory()->create([
-                'customer_id' => $customerId
-            ]);  
-        } catch (\Throwable $th) {
-            //throw $th;
-        } 
+        OrderEntity::factory()->create([
+            'customer_id' => $customerId
+        ]);  
 
         $this->assertDatabaseCount('order_entities', 1);
     }

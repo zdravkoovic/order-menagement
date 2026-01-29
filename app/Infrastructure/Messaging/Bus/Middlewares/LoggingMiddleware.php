@@ -28,12 +28,12 @@ final class LoggingMiddleware implements IMiddleware
             /** @var ?Uuid $result */
             $result = $next($action);
 
-            $logResult = [
+            if(!$result) $logResult = [
                 "status" => true,
                 "result" => $result
             ];
 
-            $this->logger->info('Operation ' . class_basename($action) . ' completed', array_merge($ctx, ['result' => $logResult]));
+            if(!$result) $this->logger->info('Operation ' . class_basename($action) . ' completed', array_merge($ctx, ['result' => $logResult]));
 
             return $result;
 

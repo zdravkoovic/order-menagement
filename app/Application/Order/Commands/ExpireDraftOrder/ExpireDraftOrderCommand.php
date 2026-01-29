@@ -2,10 +2,11 @@
 
 namespace App\Application\Order\Commands\ExpireDraftOrder;
 
+use App\Application\Abstraction\IAction;
 use App\Application\Abstraction\ICommand;
 use App\Domain\Shared\Uuid;
 
-final class ExpireDraftOrderCommand implements ICommand
+final class ExpireDraftOrderCommand implements ICommand, IAction
 {
     private Uuid $commandId;
     public function __construct() {

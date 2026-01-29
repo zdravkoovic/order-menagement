@@ -8,9 +8,7 @@ use App\Domain\Interfaces\IOrderRepository;
 use App\Domain\OrderAggregate\Order;
 use App\Domain\Shared\Uuid;
 use DateTimeImmutable;
-use Symfony\Component\Clock\Clock;
-
-use function Laravel\Prompts\info;
+use Illuminate\Support\Facades\Log;
 
 final class ExpireDraftOrderCommandHandler implements ICommandHandler
 {
@@ -21,7 +19,6 @@ final class ExpireDraftOrderCommandHandler implements ICommandHandler
     public function handle(ICommand $command): ?Uuid
     {
         /** @var ExpireDraftOrderCommand $command */
-
         $now = new DateTimeImmutable();
         foreach($this->orders->findExpiratedOrderDrafts($now) as $order)
         {
@@ -29,7 +26,6 @@ final class ExpireDraftOrderCommandHandler implements ICommandHandler
             $order->isExpired($now);
             $this->orders->updateStateToExpire($order->id);
         }
-
         return null;
     }
 }

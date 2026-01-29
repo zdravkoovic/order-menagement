@@ -117,14 +117,14 @@ class OrderRepository implements IOrderRepository
     public function findExpiratedOrderDrafts(DateTimeImmutable $now, ?int $limit = 500) : iterable
     {
         return OrderEntity::where('state', OrderState::DRAFT->value)
-            ->whereRaw('expires_at <= NOW()')
+            ->where('expires_at','<=',$now)
             ->orderBy('expires_at')
             ->limit($limit)
             ->get()
             ->map(fn ($entity) => $this->mapper->toDomain($entity));
     }
 
-    public function updateStateToExpire(OrderId $id)
+    public function updateStateToExpire(OrderId $id): void
     {
         $entity = OrderEntity::find($id->value());
         $entity->state = OrderState::EXPIRED;

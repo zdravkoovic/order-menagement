@@ -7,7 +7,6 @@ use App\Application\Abstraction\Dto;
 use App\Application\Abstraction\IAction;
 use App\Domain\Shared\Uuid;
 
-
 final class ResultDataTransformMiddleware implements IMiddleware
 {
     public function handle(IAction $action, callable $next): ?array
@@ -17,7 +16,8 @@ final class ResultDataTransformMiddleware implements IMiddleware
             $result instanceof Uuid => 
                 ["id" => $result],
             $result instanceof Dto => $result->getData(),
-            default => ["ids" => $result]
+            is_array($result) => ["ids" => $result],
+            default => null
         };
     }
 }

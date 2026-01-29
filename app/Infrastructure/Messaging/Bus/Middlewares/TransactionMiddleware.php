@@ -12,7 +12,6 @@ final class TransactionMiddleware implements IMiddleware
     public function handle(IAction $command, callable $next): ?array
     {   
         DB::beginTransaction();
-
         try {
             $result = $next($command);
             DB::commit();

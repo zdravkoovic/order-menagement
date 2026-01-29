@@ -34,7 +34,6 @@ final class InfrastructureServiceProvider extends ServiceProvider
             foreach(CommandMap::MAP as $command => $handlerClass) {
                 $map[$command] = $app->make($handlerClass);
             }
-
             $middleware = [
                 $app->make(LoggingMiddleware::class),
                 $app->make(TransactionMiddleware::class),

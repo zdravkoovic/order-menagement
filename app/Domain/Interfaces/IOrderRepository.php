@@ -28,5 +28,5 @@ interface IOrderRepository
 
     public function findExpiratedOrderDrafts(DateTimeImmutable $now, ?int $limit = 500) : iterable;
 
-    public function updateStateToExpire(OrderId $id);
+    public function updateStateToExpire(OrderId $id): void;
 }

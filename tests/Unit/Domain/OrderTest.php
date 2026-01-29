@@ -87,7 +87,7 @@ final class OrderTest extends TestCase
         $order = new Order(
             customerId: CustomerId::fromString(Uuid::generate()->__toString()),
             state: OrderState::DRAFT,
-            expiresAt: new DateTimeImmutable('2 hour')
+            expiresAt: new DateTimeImmutable('+2 hours')
         );
 
         $order->isExpired(new DateTimeImmutable());

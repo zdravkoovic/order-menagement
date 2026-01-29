@@ -44,7 +44,7 @@ final class OrderBuilder
         return $b;
     }
 
-    public function withReference(OrderNumber $reference): self
+    public function withReference(?OrderNumber $reference): self
     {
         $this->reference = $reference;
         return $this;

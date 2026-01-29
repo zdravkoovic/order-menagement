@@ -40,4 +40,32 @@ final class OrderApiTest extends TestCase
         
         $this->assertDatabaseCount('order_entities', 1);
     }
+
+    public function test_create_order_for_registered_users(): void
+    {
+        $customer_id = Uuid::generate()->__toString();
+        Http::fake([
+            config('services.customer.uri') . "*" => Http::response(['id' => $customer_id], 200),
+        ]);
+        $payload = [
+            'customer_id' => Uuid::generate()->__toString(),
+            'is_guest' => false
+        ];
+
+        $response = $this->postJson('/api/orders', $payload);
+
+        $response->assertStatus(201);
+
+        $order = OrderEntity::first();
+        $this->assertTrue(
+            abs(
+                $order->expires_at->getTimestamp()
+                - $order->created_at->addMinutes(120)->getTimestamp()
+            ) <= 2
+        );
+
+        $this->assertDatabaseHas('order_entities', ['state' => 'DRAFT']);
+        
+        $this->assertDatabaseCount('order_entities', 1);
+    }
 }
