@@ -1,7 +1,5 @@
 <?php
 
-use App\Infrastructure\Providers\CommandBusServiceProvider;
-
 return [
 
     /*

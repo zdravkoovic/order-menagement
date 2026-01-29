@@ -4,12 +4,9 @@ namespace App\Domain\OrderAggregate;
 
 use App\Domain\AggregateRoot;
 use App\Domain\IAggregateRoot;
-use App\Domain\OrderAggregate\Errors\CustomerNotFoundException;
-use App\Domain\OrderAggregate\Errors\OrderExpirationTimeViolated;
 use App\Domain\OrderAggregate\Errors\PaymentMethodUndefinedException;
 use App\Domain\OrderAggregate\Errors\ReferenceUndefinedException;
 use App\Domain\OrderAggregate\Errors\TotalAmountViolationException;
-use App\Domain\Shared\Uuid;
 use DateTimeImmutable;
 
 class Order implements IAggregateRoot

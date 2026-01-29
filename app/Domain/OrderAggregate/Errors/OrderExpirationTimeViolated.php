@@ -6,10 +6,10 @@ use DateTimeImmutable;
 
 final class OrderExpirationTimeViolated extends \DomainException
 {
-    protected $message;
     public function __construct(private readonly DateTimeImmutable $creationTime, private readonly DateTimeImmutable $expirationTime) 
     {
-        $this->message = "Expiration time was exceeded. Please, create new order.";
+        $message = "Expiration time was exceeded. Please, create new order.";
+        parent::__construct($message);
     }
 
     public function getExpirationTime() : DateTimeImmutable

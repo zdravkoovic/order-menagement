@@ -6,10 +6,9 @@ use App\Domain\OrderAggregate\OrderId;
 
 final class ReferenceUndefinedException extends \DomainException
 {
-    protected $message;
-
     public function __construct(private readonly OrderId $orderId) {
-        $this->message = "Order number (reference) is required to complete your order.";
+        $message = "Order number (reference) is required to complete your order.";
+        parent::__construct($message);
     }
 
     public function getOrderId() : OrderId

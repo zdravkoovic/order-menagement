@@ -4,11 +4,9 @@ namespace App\Application\Orderline\Commands\CreateOrderline;
 
 use App\Application\Abstraction\BaseCommandHandler;
 use App\Application\Abstraction\ICommand;
-use App\Application\Errors\InvalidRequestException;
 use App\Application\Gateways\ProductGateway;
 use App\Domain\IAggregateRoot;
 use App\Domain\Interfaces\IOrderlineRepository;
-use App\Domain\Interfaces\IOrderRepository;
 use App\Domain\OrderlineAggregate\Orderline;
 use App\Domain\Shared\Uuid;
 
@@ -44,6 +42,7 @@ final class CreateOrderlineCommandHandler extends BaseCommandHandler
                 $command->orderId
             );
             $orderlineIds[] = $this->orderlines->save($createdOrderline)->value();
+            $this->createdOrderlines[] = $createdOrderline;
         }
 
         return $orderlineIds;
@@ -51,7 +50,7 @@ final class CreateOrderlineCommandHandler extends BaseCommandHandler
 
     public function GetAggregateRoot(): ?IAggregateRoot
     {
-        throw null;
+        throw $this->createdOrderlines[0];
     }
 
     protected function ClearAggregateState(): void

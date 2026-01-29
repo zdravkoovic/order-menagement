@@ -5,9 +5,6 @@ namespace Database\Factories;
 use App\Infrastructure\Persistance\Models\OrderlineEntity;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\OrderlineEntity>
- */
 class OrderlineEntityFactory extends Factory
 {
     protected $model = OrderlineEntity::class;

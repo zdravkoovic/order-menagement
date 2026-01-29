@@ -18,7 +18,7 @@ interface IOrderlineRepository
      */
     public function getAll() : iterable | null;
     
-    public function save(Orderline $entity) : OrderlineId;
+    public function save(Orderline $orderline) : OrderlineId;
     public function update(Orderline $entity) : Orderline;
     public function delete(OrderlineId $id) : void;
 }

@@ -12,8 +12,7 @@ use App\Infrastructure\Persistance\Models\OrderEntity;
 use App\Infrastructure\Services\OrderMapper;
 use Carbon\Carbon;
 use DateTimeImmutable;
-
-use function Laravel\Prompts\info;
+use PDOException;
 
 class OrderRepository implements IOrderRepository
 {
@@ -49,7 +48,7 @@ class OrderRepository implements IOrderRepository
             $order->save();
             return OrderId::fromString($order->id);
 
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             
             if($this->isDraftUniqueViolation($e)){
                 throw new DuplicateDraftOrderByCustomerException([
@@ -90,7 +89,7 @@ class OrderRepository implements IOrderRepository
         return $state ? OrderState::from($state->value) : null;
     }
 
-    private function isDraftUniqueViolation(\PDOException $e) : bool
+    private function isDraftUniqueViolation(PDOException $e) : bool
     {
         $info = $e->errorInfo ?? null;
 

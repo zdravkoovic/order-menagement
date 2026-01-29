@@ -25,15 +25,15 @@ final class LoggingMiddleware implements IMiddleware
         $this->logger->info("Dispatching command \n", $ctx);
 
         try {
-            /** @var ?Uuid $result */
+            /** @var ?array $result */
             $result = $next($action);
 
-            if(!$result) $logResult = [
+            $logResult = [
                 "status" => true,
                 "result" => $result
             ];
 
-            if(!$result) $this->logger->info('Operation ' . class_basename($action) . ' completed', array_merge($ctx, ['result' => $logResult]));
+            $this->logger->info('Operation ' . class_basename($action) . ' completed', array_merge($ctx, ['result' => $logResult]));
 
             return $result;
 

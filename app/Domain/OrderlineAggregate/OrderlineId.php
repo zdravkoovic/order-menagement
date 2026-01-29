@@ -2,6 +2,7 @@
 
 namespace App\Domain\OrderlineAggregate;
 
+use App\Domain\Shared\Uuid;
 
 final class OrderlineId
 {
@@ -21,4 +22,5 @@ final class OrderlineId
     {
         return $this->value;
     }
+
 }

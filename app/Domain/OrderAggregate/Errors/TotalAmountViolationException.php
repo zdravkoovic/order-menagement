@@ -6,10 +6,9 @@ use App\Domain\OrderAggregate\OrderId;
 
 final class TotalAmountViolationException extends \DomainException
 {
-    protected $message;
-
     public function __construct(private readonly OrderId $orderId) {
-        $this->message = "Total amount cannot be zero in order to complete your order.";
+        $message = "Total amount cannot be zero in order to complete your order.";
+        parent::__construct($message);
     }
 
     public function getOrderId()

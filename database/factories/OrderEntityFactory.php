@@ -7,9 +7,6 @@ use App\Domain\Shared\Uuid;
 use App\Infrastructure\Persistance\Models\OrderEntity;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\OrderEntity>
- */
 class OrderEntityFactory extends Factory
 {
     protected $model = OrderEntity::class;

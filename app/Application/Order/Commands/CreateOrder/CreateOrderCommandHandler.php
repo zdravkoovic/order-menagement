@@ -11,7 +11,6 @@ use App\Application\Order\ExpirationPolicy\RegisteredOrderExpirationPolicy;
 use App\Domain\IAggregateRoot;
 use App\Domain\Interfaces\IOrderRepository;
 use App\Domain\OrderAggregate\CustomerId;
-use App\Domain\OrderAggregate\Errors\CustomerNotFoundException;
 use App\Domain\OrderAggregate\Order;
 use App\Domain\OrderAggregate\OrderBuilder;
 use App\Domain\OrderAggregate\OrderId;

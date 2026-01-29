@@ -13,7 +13,9 @@ final class GetOrderByIdQueryHandler extends BaseQueryHandler
 {
     public function __construct(
         private IOrderRepository $orders
-    ) {}
+    ) {
+        parent::__construct();
+    }
 
     public function execute(IQuery $query): ?Dto
     {
