@@ -10,6 +10,6 @@ final class QuantityUpdatedEvent extends BaseOrderlineDomainEvent
     public function __construct(Orderline $orderline)
     {
         $this->orderline = $orderline;
-        return parent::__construct($this->orderline->id);
+        return parent::__construct($this->orderline->id->value());
     }
 }

@@ -12,7 +12,6 @@ class InfrastructureExceptions extends RuntimeException
         int $code = 0,
         public array $details = []
     ) {
-        $this->message = $message;
-        $this->code = $code;
+        parent::__construct($message, $code);
     }
 }

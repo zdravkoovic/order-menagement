@@ -16,7 +16,7 @@ use PDOException;
 
 class OrderRepository implements IOrderRepository
 {
-    public function __construct(private OrderMapper $mapper)
+    public function __construct(private readonly OrderMapper $mapper)
     {}
 
     public function getById(OrderId $id) : Order | null

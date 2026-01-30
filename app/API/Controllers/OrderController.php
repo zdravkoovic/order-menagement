@@ -8,14 +8,15 @@ use App\Application\Abstraction\Bus\IQueryBus;
 use App\Application\Order\Commands\CreateOrder\CreateOrderCommand;
 use App\Application\Order\Commands\DeleteOrder\DeleteOrderCommand;
 use App\Application\Order\Queries\GetOrder\ById\GetOrderByIdQuery;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class OrderController
 {
     public function __construct(
-        private ICommandBus $commandBus,
-        private IQueryBus $queryBus
+        private readonly ICommandBus $commandBus,
+        private readonly IQueryBus $queryBus
     ){}
 
     /**
@@ -29,7 +30,7 @@ class OrderController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreateOrderRequest $request)
+    public function store(CreateOrderRequest $request): JsonResponse
     {
         $validated = $request->validated();
         $command = new CreateOrderCommand(
@@ -43,27 +44,22 @@ class OrderController
             $result = $this->commandBus->dispatch($command);
             if($result->success) return response()->json(['order_id' => $result->data], $result->httpStatus);
             return response()->json(['error' => $result->appError->message], $result->appError->httpStatus);
-        } catch (\Throwable $e) {
-            Log::critical('unhandled.command.exception', [
-                'exception' => get_class($e), 
-                'message' => $e->getMessage(),
-                'command_id' => $command->commandId()
-            ]);
-            throw $e;
+        } catch (\Throwable) {
+            return response()->json("Server problems", 500);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
         try {
             $result = $this->queryBus->dispatch(new GetOrderByIdQuery($id));
             if($result->success) return response()->json($result->data, $result->httpStatus);
             return response()->json($result->data, $result->httpStatus);
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (Throwable) {
+            return response()->json("Server problems", 500);
         }
     }
 
@@ -86,7 +82,7 @@ class OrderController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $result = $this->commandBus->dispatch(new DeleteOrderCommand($id));
         if($result->success) return response()->json($result, 204);

@@ -5,7 +5,6 @@ namespace App\Infrastructure\Messaging\Gateways;
 use App\Application\Gateways\ProductGateway;
 use App\Application\Orderline\DTOs\ProductPricesAndQuantities;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Nette\NotImplementedException;
 
@@ -50,11 +49,6 @@ final class ProductHttpClient implements ProductGateway
             return null;
         } catch(ConnectionException $e) {
             throw $e;
-        } catch(RequestException $e) {
-            throw $e;
-        }
-        catch (\Throwable $th) {
-            throw $th;
         }
     }
 }

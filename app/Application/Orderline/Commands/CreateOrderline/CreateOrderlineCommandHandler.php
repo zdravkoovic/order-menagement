@@ -17,7 +17,9 @@ final class CreateOrderlineCommandHandler extends BaseCommandHandler
     public function __construct(
         private IOrderlineRepository $orderlines,
         private ProductGateway $productGateway
-    ) {}
+    ) {
+        parent::__construct();
+    }
 
     /**
      * Undocumented function

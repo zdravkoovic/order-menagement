@@ -20,7 +20,7 @@ interface IOrderRepository
      */
     public function getAll() : iterable | null;
     
-    public function save(Order $id) : OrderId;
+    public function save(Order $order) : OrderId;
     public function update(Order $order) : Order;
     public function delete(OrderId $id) : void;
 
