@@ -12,7 +12,7 @@ use App\Domain\OrderAggregate\OrderId;
 final class GetOrderByIdQueryHandler extends BaseQueryHandler
 {
     public function __construct(
-        private IOrderRepository $orders
+        private readonly IOrderRepository $orders
     ) {
         parent::__construct();
     }

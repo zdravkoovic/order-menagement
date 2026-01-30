@@ -17,16 +17,16 @@ use App\Infrastructure\Errors\InfrastructureExceptions;
 use DomainException;
 use LogicException;
 
-use function Laravel\Prompts\info;
+use Throwable;
 
 final class CommandBus implements ICommandBus
 {
     public function __construct(
-        private array $map,
-        private ?array $middleware = []
+        private readonly array $map,
+        private readonly ?array $middleware = []
     )
     {}
-    
+
     public function dispatch(ICommand $command): Result
     {
         /** @var ICommandHandler $handler */
@@ -52,7 +52,7 @@ final class CommandBus implements ICommandBus
         } catch (ApplicationException $app) {
             $appError = ApplicationExceptionTranslator::translate($app);
             return Result::fail($appError);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return Result::fail(new UserErrorMessage($e->getMessage(), 500), 500);
         }
     }

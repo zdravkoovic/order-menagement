@@ -23,17 +23,16 @@ use Illuminate\Support\ServiceProvider;
 
 final class InfrastructureServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         $this->app->bind(IOrderRepository::class, OrderRepository::class);
         $this->app->bind(IOrderlineRepository::class, OrderlineRepository::class);
 
         $this->app->singleton(ICommandBus::class, function ($app) {
-            $map = [];
-            
-            foreach(CommandMap::MAP as $command => $handlerClass) {
-                $map[$command] = $app->make($handlerClass);
-            }
+
+            $map = array_map(function ($handlerClass) use ($app) {
+                return $app->make($handlerClass);
+            }, CommandMap::MAP);
             $middleware = [
                 $app->make(LoggingMiddleware::class),
                 $app->make(TransactionMiddleware::class),
@@ -47,11 +46,10 @@ final class InfrastructureServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(IQueryBus::class, function ($app) {
-            $map = [];
 
-            foreach(QueryMap::MAP as $query => $handlerClass) {
-                $map[$query] = $app->make($handlerClass);
-            }
+            $map = array_map(function ($handlerClass) use ($app) {
+                return $app->make($handlerClass);
+            }, QueryMap::MAP);
 
             $middleware = [
                 $app->make(LoggingMiddleware::class),
@@ -66,6 +64,6 @@ final class InfrastructureServiceProvider extends ServiceProvider
 
         $this->app->bind(ProductGateway::class, ProductHttpClient::class);
         $this->app->bind(CustomerGateway::class, CustomerHttpClient::class);
-        
+
     }
 }

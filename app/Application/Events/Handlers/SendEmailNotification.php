@@ -3,8 +3,6 @@
 namespace App\Application\Events\Handlers;
 
 use App\Domain\OrderAggregate\Events\OrderCreated;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class SendEmailNotification
 {

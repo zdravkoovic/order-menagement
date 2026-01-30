@@ -15,8 +15,8 @@ final class CreateOrderlineCommandHandler extends BaseCommandHandler
     private ?array $createdOrderlines;
 
     public function __construct(
-        private IOrderlineRepository $orderlines,
-        private ProductGateway $productGateway
+        private readonly IOrderlineRepository $orderlines,
+        private readonly ProductGateway       $productGateway
     ) {
         parent::__construct();
     }
@@ -34,7 +34,7 @@ final class CreateOrderlineCommandHandler extends BaseCommandHandler
         if($pricesAndQuantities === null) return null;
 
         $orderlineIds = [];
-        
+
         foreach($pricesAndQuantities as $productId => $data)
         {
             $createdOrderline = Orderline::Create(

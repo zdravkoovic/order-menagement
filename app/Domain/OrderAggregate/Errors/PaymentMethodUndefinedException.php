@@ -3,8 +3,9 @@
 namespace App\Domain\OrderAggregate\Errors;
 
 use App\Domain\OrderAggregate\OrderId;
+use DomainException;
 
-final class PaymentMethodUndefinedException extends \DomainException
+final class PaymentMethodUndefinedException extends DomainException
 {
     public function __construct(private readonly OrderId $orderId) {
         $message = "Payment method is required to complete your order.";

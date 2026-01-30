@@ -6,10 +6,10 @@ use App\Application\Abstraction\IAction;
 use App\Application\Abstraction\IQuery;
 use App\Domain\Shared\Uuid;
 
-final class GetOrderByIdQuery implements IQuery, IAction
+final readonly class GetOrderByIdQuery implements IQuery, IAction
 {
-    private readonly string $queryId;
-    public readonly string $id;
+    private string $queryId;
+    public string $id;
 
     public function __construct(
         string $id

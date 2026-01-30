@@ -14,7 +14,7 @@ final class DeleteOrderCommandHandler extends BaseCommandHandler
 {
     private ?Order $deletedOrder;
 
-    public function __construct(private IOrderRepository $orders) 
+    public function __construct(private readonly IOrderRepository $orders)
     {
         parent::__construct();
     }

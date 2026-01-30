@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class OrderlineController
 {
     public function __construct(
-      private ICommandBus $commandBus
+      private readonly ICommandBus $commandBus
     ){}
     /**
      * Display a listing of the resource.
@@ -25,10 +25,10 @@ class OrderlineController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreateOrderlineRequest $request)
+    public function store(CreateOrderlineRequest $request): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validated();
-        
+
         $result = $this->commandBus->dispatch(new CreateOrderlineCommand(
             $validated['order_id'],
             $validated['product_ids'],

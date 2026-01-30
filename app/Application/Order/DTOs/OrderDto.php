@@ -7,13 +7,13 @@ use App\Application\Abstraction\Dto;
 final class OrderDto implements Dto
 {
     public function __construct(
-        private ?string $reference,
-        private string $customerId,
-        private string $state,
-        private string $paymentMethod,
-        private float $totalAmount
+        private readonly ?string $reference,
+        private readonly string  $customerId,
+        private readonly string  $state,
+        private readonly string  $paymentMethod,
+        private readonly float   $totalAmount
     ) {
-        
+
     }
     public function getData() : array
     {

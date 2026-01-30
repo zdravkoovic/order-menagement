@@ -14,9 +14,9 @@ use Carbon\Carbon;
 use DateTimeImmutable;
 use PDOException;
 
-class OrderRepository implements IOrderRepository
+readonly class OrderRepository implements IOrderRepository
 {
-    public function __construct(private readonly OrderMapper $mapper)
+    public function __construct(private OrderMapper $mapper)
     {}
 
     public function getById(OrderId $id) : Order | null
@@ -29,7 +29,7 @@ class OrderRepository implements IOrderRepository
     {
         return OrderEntity::find($id->value()) != null;
     }
-    
+
     /**
      * Get all orders.
      *
@@ -43,13 +43,13 @@ class OrderRepository implements IOrderRepository
     public function save(Order $order) : OrderId
     {
         try {
-            
+
             $order = $this->mapper->toEntity($order);
             $order->save();
             return OrderId::fromString($order->id);
 
         } catch (PDOException $e) {
-            
+
             if($this->isDraftUniqueViolation($e)){
                 throw new DuplicateDraftOrderByCustomerException([
                     'customerId' => $order->customerId,

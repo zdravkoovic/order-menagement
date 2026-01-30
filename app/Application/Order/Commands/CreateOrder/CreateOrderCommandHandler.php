@@ -23,11 +23,11 @@ final class CreateOrderCommandHandler extends BaseCommandHandler
     private ?OrderId $orderId;
 
     public function __construct(
-        private IOrderRepository $orderRepository,
-        private GuestOrderExpirationPolicy $guestOrderExpirationPolicy,
-        private RegisteredOrderExpirationPolicy $registeredOrderExpirationPolicy,
-        private Clock $clock,
-        private CustomerGateway $gateway
+        private readonly IOrderRepository                $orderRepository,
+        private readonly GuestOrderExpirationPolicy      $guestOrderExpirationPolicy,
+        private readonly RegisteredOrderExpirationPolicy $registeredOrderExpirationPolicy,
+        private readonly Clock                           $clock,
+        private readonly CustomerGateway                 $gateway
     ){
         parent::__construct();
     }

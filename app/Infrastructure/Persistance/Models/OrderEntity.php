@@ -6,6 +6,7 @@ use App\Domain\OrderAggregate\OrderState;
 use App\Domain\OrderAggregate\PaymentMethod;
 use Database\Factories\OrderEntityFactory;
 use DateTimeImmutable;
+use Eloquent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,14 +21,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property PaymentMethod $payment_method
  * @property DateTimeImmutable $created_at
  * @property DateTimeImmutable $updated_at
- * 
- * @mixin \Eloquent
+ *
+ * @mixin Eloquent
  */
 class OrderEntity extends Model
 {
     use HasUuids, HasFactory;
 
-    protected static function newFactory()
+    protected static function newFactory(): OrderEntityFactory
     {
         return OrderEntityFactory::new();
     }
@@ -57,7 +58,7 @@ class OrderEntity extends Model
         'created_at' => 'immutable_datetime',
         'updated_at' => 'immutable_datetime'
     ];
-    
+
     /**
      * Indicates if the model's ID is auto-incrementing.
      *
@@ -72,9 +73,8 @@ class OrderEntity extends Model
     */
     protected $keyType = 'string';
 
-    public function orderlines()
+    public function orderlines(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(OrderlineEntity::class, 'order_id', 'id');
     }
 }
-    

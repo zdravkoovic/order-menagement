@@ -8,18 +8,18 @@ use App\Application\Abstraction\IQuery;
 use App\Application\Abstraction\IQueryHandler;
 use App\Application\Abstraction\Result;
 use App\Application\Errors\ApplicationException;
-use App\Application\Errors\Messages\UserErrorMessage;
 use App\Application\Errors\Translators\DomainExceptionTranslator;
 use App\Application\Errors\Translators\InfrastructureExceptionTranslator;
 use App\Infrastructure\Errors\InfrastructureExceptions;
 use DomainException;
 use LogicException;
+use Throwable;
 
 final class QueryBus implements IQueryBus
 {
     public function __construct(
-        private array $map,
-        private ?array $middleware = []
+        private readonly array $map,
+        private readonly ?array $middleware = []
     ) {}
     public function dispatch(IQuery $query): Result
     {
@@ -45,10 +45,6 @@ final class QueryBus implements IQueryBus
         } catch (InfrastructureExceptions $infra){
             $appError = InfrastructureExceptionTranslator::translate($infra);
             return Result::fail($appError, $appError->httpStatus);
-        }
-        catch (\Throwable $th) {
-            // return Result::fail(new UserErrorMessage("Internal server error.", 500), 500);
-            throw $th;
         }
     }
 }

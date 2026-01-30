@@ -10,15 +10,11 @@ final class CustomerHttpClient implements CustomerGateway
 {
     public function exists(string $customerId): bool
     {
-        try {
-            $response = Http::get(config('services.customer.uri') . $customerId);
-            if($response->status() === 200) {
-                return true;
-            }
-            return false;
-        } catch (RequestException $e) {
-            throw $e;
+        $response = Http::get(config('services.customer.uri') . $customerId);
+        if($response->status() === 200) {
+            return true;
         }
+        return false;
 
     }
 }

@@ -5,15 +5,15 @@ namespace App\Infrastructure\Messaging\Bus\Middlewares;
 use App\Application\Abstraction\Bus\IMiddleware;
 use App\Application\Abstraction\IAction;
 use App\Application\Errors\ApplicationException;
-use App\Domain\Shared\Uuid;
 use App\Infrastructure\Errors\InfrastructureExceptions;
 use DomainException;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 final class LoggingMiddleware implements IMiddleware
 {
     public function __construct(
-        private LoggerInterface $logger
+        private readonly LoggerInterface $logger
     ){}
 
     public function handle(IAction $action, callable $next): ?array
@@ -39,7 +39,7 @@ final class LoggingMiddleware implements IMiddleware
 
         } catch(DomainException $domain) {
             $this->logger->warning(class_basename($action) . " failed \n", array_merge(
-                $ctx, 
+                $ctx,
                 [ 'exception' => ['class' => class_basename($domain), 'message' => $domain->getMessage()]
             ]));
             throw $domain;
@@ -55,8 +55,8 @@ final class LoggingMiddleware implements IMiddleware
                 ['exception' => ['class' => class_basename($app), 'message' => $app->getMessage()]]
             ]));
             throw $app;
-        } 
-        catch (\Throwable $e) {
+        }
+        catch (Throwable $e) {
             $this->logger->error(class_basename($action) . " failed unexpectedly \n", array_merge($ctx, [
                 'exception' => ['class' => $e::class, 'message' => $e->getMessage(), 'stack' => app()->isLocal() ? $e->getTraceAsString() : null]
             ]));

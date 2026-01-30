@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Persistance\Models;
 
 use Database\Factories\OrderlineEntityFactory;
+use Eloquent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,13 +15,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $order_id
  * @property-read OrderEntity $order
  *
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class OrderlineEntity extends Model
 {
     use HasFactory;
 
-    protected static function newFactory()
+    public mixed $amount;
+
+    protected static function newFactory(): OrderlineEntityFactory
     {
         return OrderlineEntityFactory::new();
     }
@@ -48,7 +51,7 @@ class OrderlineEntity extends Model
         'updated_at' => 'immutable_datetime'
     ];
 
-    public function order()
+    public function order(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(OrderEntity::class, 'order_id', 'id');
     }

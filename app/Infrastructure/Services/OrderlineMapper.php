@@ -2,14 +2,12 @@
 
 namespace App\Infrastructure\Services;
 
-use App\Domain\Interfaces\IOrderRepository;
 use App\Domain\OrderAggregate\Money;
 use App\Domain\OrderAggregate\OrderId;
 use App\Domain\OrderlineAggregate\Orderline;
 use App\Domain\OrderlineAggregate\OrderlineId;
 use App\Domain\OrderlineAggregate\ProductId;
 use App\Domain\OrderlineAggregate\Quantity;
-use App\Infrastructure\Persistance\Models\OrderEntity;
 use App\Infrastructure\Persistance\Models\OrderlineEntity;
 
 class OrderlineMapper

@@ -2,11 +2,9 @@
 
 namespace App\Domain\OrderlineAggregate;
 
-use App\Domain\Shared\Uuid;
-
-final class OrderlineId
+final readonly class OrderlineId
 {
-    private readonly int $value;
+    private int $value;
 
     private function __construct(int $value)
     {

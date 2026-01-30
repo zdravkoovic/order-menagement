@@ -4,9 +4,9 @@ namespace App\Domain\OrderAggregate;
 
 use App\Domain\Shared\Uuid;
 
-final class CustomerId
+final readonly class CustomerId
 {
-    private readonly Uuid $id;
+    private Uuid $id;
 
     private function __construct(Uuid $id)
     {

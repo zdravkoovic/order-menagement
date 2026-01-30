@@ -3,15 +3,16 @@
 namespace App\Domain\OrderAggregate\Errors;
 
 use App\Domain\OrderAggregate\OrderId;
+use DomainException;
 
-final class TotalAmountViolationException extends \DomainException
+final class TotalAmountViolationException extends DomainException
 {
     public function __construct(private readonly OrderId $orderId) {
         $message = "Total amount cannot be zero in order to complete your order.";
         parent::__construct($message);
     }
 
-    public function getOrderId()
+    public function getOrderId(): OrderId
     {
         return $this->orderId;
     }

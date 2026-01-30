@@ -23,7 +23,7 @@ abstract class BaseCommandHandler implements ICommandHandler
         $aggregate = $this->GetAggregateRoot();
         if($aggregate != null)
         {
-            foreach($aggregate->PopDomainEvents() as $event)
+            foreach($aggregate->PopDomainEvents() as $ignored)
             {
                 // $this->domainEventDispatcher->Dispatch($event);
             }

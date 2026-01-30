@@ -2,7 +2,6 @@
 
 namespace App\Application\Errors\Translators;
 
-use App\Application\Errors\ApplicationException;
 use App\Application\Errors\Messages\UserErrorMessage;
 use App\Domain\OrderAggregate\Errors\OrderExpirationTimeViolated;
 use App\Domain\OrderAggregate\Errors\PaymentMethodUndefinedException;
@@ -10,17 +9,17 @@ use App\Domain\OrderAggregate\Errors\ReferenceUndefinedException;
 use App\Domain\OrderAggregate\Errors\TotalAmountViolationException;
 use Throwable;
 
-final class DomainExceptionTranslator 
+final class DomainExceptionTranslator
 {
     public static function translate(Throwable $e): ?UserErrorMessage
     {
         return match (true) {
-            $e instanceof PaymentMethodUndefinedException => 
+            $e instanceof PaymentMethodUndefinedException =>
                 new UserErrorMessage(
                     'Payment method is required to complete your order.',
                     422
                 ),
-            $e instanceof TotalAmountViolationException => 
+            $e instanceof TotalAmountViolationException =>
                 new UserErrorMessage(
                     'You must have at least one ordered product to be able to order.',
                     422
@@ -30,7 +29,7 @@ final class DomainExceptionTranslator
                     'Your order is expired. Create new one.',
                     409
                 ),
-            $e instanceof ReferenceUndefinedException => 
+            $e instanceof ReferenceUndefinedException =>
                 new UserErrorMessage(
                     'Order reference is missing and the operation cannot be completed.',
                     422

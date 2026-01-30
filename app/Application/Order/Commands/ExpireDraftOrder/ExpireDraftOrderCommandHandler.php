@@ -8,12 +8,11 @@ use App\Domain\Interfaces\IOrderRepository;
 use App\Domain\OrderAggregate\Order;
 use App\Domain\Shared\Uuid;
 use DateTimeImmutable;
-use Illuminate\Support\Facades\Log;
 
 final class ExpireDraftOrderCommandHandler implements ICommandHandler
 {
     public function __construct(
-        private IOrderRepository $orders,
+        private readonly IOrderRepository $orders,
     )
     {}
     public function handle(ICommand $command): ?Uuid

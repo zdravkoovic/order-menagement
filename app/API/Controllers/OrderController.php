@@ -12,11 +12,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Throwable;
 
-class OrderController
+readonly class OrderController
 {
     public function __construct(
-        private readonly ICommandBus $commandBus,
-        private readonly IQueryBus $queryBus
+        private ICommandBus $commandBus,
+        private IQueryBus   $queryBus
     ){}
 
     /**
@@ -24,7 +24,7 @@ class OrderController
      */
     public function index()
     {
-        
+
     }
 
     /**
@@ -44,7 +44,7 @@ class OrderController
             $result = $this->commandBus->dispatch($command);
             if($result->success) return response()->json(['order_id' => $result->data], $result->httpStatus);
             return response()->json(['error' => $result->appError->message], $result->appError->httpStatus);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return response()->json("Server problems", 500);
         }
     }

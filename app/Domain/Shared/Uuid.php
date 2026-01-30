@@ -2,7 +2,6 @@
 
 namespace App\Domain\Shared;
 
-use InvalidArgumentException;
 use JsonSerializable;
 use Illuminate\Support\Str;
 

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('reference', 20)->unique()->nullable();
             $table->enum('payment_method', PaymentMethod::cases())->nullable();
-            $table->decimal('total_amount', 10, 2)->nullable();
+            $table->decimal('total_amount', 10)->nullable();
             $table->uuid('customer_id')->require();
             $table->enum('state', OrderState::cases())->default(OrderState::DRAFT);
             $table->timestamp('expires_at');

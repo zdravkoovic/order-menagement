@@ -7,6 +7,7 @@ use App\Application\Orderline\DTOs\ProductPricesAndQuantities;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Nette\NotImplementedException;
+use Throwable;
 
 final class ProductHttpClient implements ProductGateway
 {
@@ -17,14 +18,7 @@ final class ProductHttpClient implements ProductGateway
 
     public function exists(int $productId): bool
     {
-        try {
-            $response = Http::get(config('services.product.uri') . $productId);
-        } catch (ConnectionException $e) {
-            throw $e;
-        } 
-        catch (\Throwable $th) {
-            throw $th;
-        }
+        $response = Http::get(config('services.product.uri') . $productId);
 
         if($response->status() === 200) {
             return true;
@@ -34,21 +28,17 @@ final class ProductHttpClient implements ProductGateway
 
     public function getProductPricesAndQuantities(array $productIds): ?array
     {
-        try {
-            $response = Http::post(config('services.product.uri')  . "/prices&quantities", ["productIds" => $productIds]);
-            if($response->successful()) {
-                $data = $response['products'];
-                /** @var array $data */
-                $result = [];
-                foreach($data as $product) {
-                    /** @var ProductPricesAndQuantities $product */
-                    $result[$product['productId']] = ["price" => $product['price'], "quantity" => $product['quantity']];
-                }
-                return $result;
+        $response = Http::post(config('services.product.uri')  . "/prices&quantities", ["productIds" => $productIds]);
+        if($response->successful()) {
+            $data = $response['products'];
+            /** @var array $data */
+            $result = [];
+            foreach($data as $product) {
+                /** @var ProductPricesAndQuantities $product */
+                $result[$product['productId']] = ["price" => $product['price'], "quantity" => $product['quantity']];
             }
-            return null;
-        } catch(ConnectionException $e) {
-            throw $e;
+            return $result;
         }
+        return null;
     }
 }

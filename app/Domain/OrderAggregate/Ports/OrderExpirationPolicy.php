@@ -6,5 +6,5 @@ use DateTimeImmutable;
 
 interface OrderExpirationPolicy
 {
-    public function expiresAt(DateTimeImmutable $now): \DateTimeImmutable;
+    public function expiresAt(DateTimeImmutable $now): DateTimeImmutable;
 }

@@ -20,8 +20,6 @@ final class HttpStatusTranslator
 
     public static function query(IQuery $action): int
     {
-        return match (true) {
-            default => 200
-        };
+        return 200;
     }
 }
