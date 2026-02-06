@@ -29,7 +29,6 @@ final class CreateOrderCommandHandler extends BaseCommandHandler
         private IOrderReadRepository $readRepos,
         private GuestOrderExpirationPolicy $guestOrderExpirationPolicy,
         private RegisteredOrderExpirationPolicy $registeredOrderExpirationPolicy,
-        private CustomerGateway $gateway,
         private ProductGateway $productGateway
     ){
         parent::__construct();
@@ -50,7 +49,7 @@ final class CreateOrderCommandHandler extends BaseCommandHandler
         $expiresAt = $policy->expiresAt(new DateTimeImmutable());
         $orderItems = UnpackingOrderItems::unpackingOrderItems($this->orderId, $command->orderItems, $products);
 
-        Order::retrieve($this->orderId->value())
+        $this->readRepos->retrieve($this->orderId->value())
             ->createOrder($customerId, $expiresAt, $command->paymentMethod, $orderItems)
             ->persist();
         

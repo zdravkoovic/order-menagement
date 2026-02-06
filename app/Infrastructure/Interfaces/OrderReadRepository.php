@@ -19,4 +19,9 @@ final class OrderReadRepository implements IOrderReadRepository
         $orderId = $orderRow->id;
         return Order::retrieve($orderId);
     }
+
+    public function retrieve(string $order_id): Order
+    {
+        return Order::retrieve($order_id);
+    }
 }

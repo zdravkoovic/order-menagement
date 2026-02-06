@@ -11,4 +11,5 @@ interface IOrderReadRepository
      * @return Order|null Returns the Order aggregate in DRAFT state, or null if none exists
     */
     public function findDraftOrderByCustomerId(string $customerId): ?Order;
+    public function retrieve(string $order_id): Order;
 }

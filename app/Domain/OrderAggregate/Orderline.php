@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\OrderlineAggregate;
+namespace App\Domain\OrderAggregate;
 
 use App\Domain\OrderAggregate\ValueObjects\Money;
 use App\Domain\OrderAggregate\ValueObjects\OrderId;
@@ -70,56 +70,5 @@ class Orderline
     public function getSubTotal() : Money
     {
         return $this->price->multiply($this->quantity);
-    }
-}
-
-final class OrderlineBuilder
-{
-    private ?ProductId $productId;
-    private ?Quantity $quantity;
-    private ?Money $price;
-    private ?OrderId $orderId;
-
-    public function __construct()
-    {}
-
-    public static function builder() : self
-    {
-        return new self();
-    }
-
-    public function withId(OrderlineId $id) : self
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    public function withProduct(ProductId $productId) : self
-    {
-        $this->productId = $productId;
-        return $this;
-    }
-
-    public function withQuantity(Quantity $quantity) : self
-    {
-        $this->quantity = $quantity;
-        return $this;
-    }
-
-    public function withPrice(Money $price) : self
-    {
-        $this->price = $price;
-        return $this;
-    }
-
-    public function withOrder(OrderId $orderId) : self
-    {
-        $this->orderId = $orderId;
-        return $this;
-    }
-
-    public function build() : Orderline
-    {
-        return new Orderline($this->orderId, $this->productId, $this->quantity, $this->price);
     }
 }

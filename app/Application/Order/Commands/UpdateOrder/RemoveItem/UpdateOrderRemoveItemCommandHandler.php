@@ -10,6 +10,7 @@ use App\Application\Order\Commands\UnpackingOrderItems;
 use App\Domain\OrderAggregate\Order;
 use App\Domain\OrderAggregate\ValueObjects\OrderId;
 use App\Domain\Shared\Uuid;
+use DateTimeImmutable;
 use Illuminate\Http\Client\ConnectionException;
 
 final class UpdateOrderRemoveItemCommandHandler extends BaseCommandHandler
@@ -25,7 +26,7 @@ final class UpdateOrderRemoveItemCommandHandler extends BaseCommandHandler
         $orderlines = UnpackingOrderItems::unpackingOrderItems($orderId, $command->products, $products);
 
         Order::retrieve($orderId->value())
-            ->removeOrderItems($orderlines)
+            ->removeOrderItems($orderlines, new DateTimeImmutable())
             ->persist();
 
         return $orderId->getId();   

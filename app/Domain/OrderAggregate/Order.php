@@ -9,7 +9,6 @@ use App\Domain\OrderAggregate\Errors\InvalidOrderStateException;
 use App\Domain\OrderAggregate\Errors\OrderItemMissmatchException;
 use App\Domain\OrderAggregate\Errors\OrderNotFoundException;
 use App\Domain\OrderAggregate\Errors\OutOfStockQuantityException;
-use App\Domain\OrderAggregate\Errors\QuantityIsViolatedException;
 use App\Domain\OrderAggregate\Events\OrderCancelled;
 use App\Domain\OrderAggregate\ValueObjects\Customer;
 use App\Domain\OrderAggregate\ValueObjects\Money;
@@ -35,7 +34,7 @@ class Order extends AggregateRoot
     private ?DateTimeImmutable $lastModifiedDate;
     private OrderState $state;
     /** 
-     * @var array<int, array{quantity:int, price:int}> $orderItems 
+     * @var array<int, array{order_id: string, quantity:int, price:int, order_name:string}> $orderItems 
      * productId => { quantity, price }
     */
     private array $orderItems = [];
@@ -44,7 +43,7 @@ class Order extends AggregateRoot
     public function createOrder(
         Customer $customer,
         DateTimeImmutable $expiresAt,
-        ?PaymentMethod $paymentMethod, 
+        ?PaymentMethod $paymentMethod = null,
         ?array $orderItems = []
     )
     {
@@ -91,7 +90,7 @@ class Order extends AggregateRoot
     }
 
     /** @param Orderline[] $products */
-    public function removeOrderItems(array $products): self
+    public function removeOrderItems(array $products, DateTimeImmutable $updatedAt): self
     {
         $this->isOrderStateValid();
         
@@ -103,7 +102,7 @@ class Order extends AggregateRoot
             if(!$this->isItemPartOfOrder($pid)) throw new OrderItemMissmatchException("You attempt to remove item which is not part of this order.");
             if(!$this->hasItemValidQuantity($pid, $quantity)) throw new ProductQuantityTooLowException($pid, $product->getName(), $quantity, "Product not found.");
 
-            $this->recordThat(new OrderItemRemoved($this->uuid(), $pid, $quantity));
+            $this->recordThat(new OrderItemRemoved($this->uuid(), $pid, $quantity, $updatedAt->format('Y-m-d h:i:s')));
         }
         return $this;
     }
