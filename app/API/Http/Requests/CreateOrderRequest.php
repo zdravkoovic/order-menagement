@@ -3,10 +3,9 @@
 namespace App\API\Http\Requests;
 
 use App\Application\Order\Commands\CreateOrder\CreateOrderCommand;
-use App\Domain\OrderAggregate\PaymentMethod;
+use App\Domain\OrderAggregate\ValueObjects\PaymentMethod;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
-use Illuminate\Validation\Validator;
 
 class CreateOrderRequest extends FormRequest
 {
@@ -30,6 +29,11 @@ class CreateOrderRequest extends FormRequest
             'is_guest'    => ['required', 'boolean'],
             'amount'      => ['numeric', 'min:0'],
             'payment_method' => [new Enum(PaymentMethod::class)],
+            'products' => ['array', 'min:0'],
+            'products.*.product_id' => ['integer'],
+            'products.*.quantity' => ['integer'],
+            'products.*.price' => ['integer'],
+
             // 'products'       => ['required', 'array', 'min:1'],
             // 'products.*.product_id' => ['required', 'integer'],
             // 'products.*.quantity'   => ['required', 'integer', 'min:1'],

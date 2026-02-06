@@ -2,9 +2,8 @@
 
 namespace App\Infrastructure\Persistance\Models;
 
-use App\Domain\OrderAggregate\OrderState;
-use App\Domain\OrderAggregate\PaymentMethod;
-use Database\Factories\OrderEntityFactory;
+use App\Domain\OrderAggregate\ValueObjects\OrderState;
+use App\Domain\OrderAggregate\ValueObjects\PaymentMethod;
 use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,28 +26,14 @@ class OrderEntity extends Model
 {
     use HasUuids, HasFactory;
 
-    protected static function newFactory()
-    {
-        return OrderEntityFactory::new();
-    }
-    /**
-     * The table
-     *
-     * @var string
-     */
-    protected $table = 'order_entities';
+    // protected static function newFactory()
+    // {
+    //     return OrderEntityFactory::new();
+    // }
 
-    protected $fillable = [
-        'id',
-        'customer_id',
-        'total_amount',
-        'reference',
-        'payment_method',
-        'state',
-        'expires_at',
-        'created_at',
-        'updated_at',
-    ];
+    protected $table = 'orders';
+
+    protected $guarded = [];
 
     protected $casts = [
         'payment_method' => PaymentMethod::class,
@@ -71,10 +56,5 @@ class OrderEntity extends Model
      * @var string
     */
     protected $keyType = 'string';
-
-    public function orderlines()
-    {
-        return $this->hasMany(OrderlineEntity::class, 'order_id', 'id');
-    }
 }
     

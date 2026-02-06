@@ -5,7 +5,6 @@ namespace App\Application\Order\Commands\DeleteOrder;
 use App\Application\Abstraction\BaseCommandHandler;
 use App\Application\Abstraction\ICommand;
 use App\Domain\IAggregateRoot;
-use App\Domain\Interfaces\IOrderRepository;
 use App\Domain\OrderAggregate\Order;
 use App\Domain\OrderAggregate\OrderId;
 use App\Domain\Shared\Uuid;
@@ -14,7 +13,7 @@ final class DeleteOrderCommandHandler extends BaseCommandHandler
 {
     private ?Order $deletedOrder;
 
-    public function __construct(private IOrderRepository $orders) 
+    public function __construct() 
     {
         parent::__construct();
     }
@@ -22,17 +21,9 @@ final class DeleteOrderCommandHandler extends BaseCommandHandler
     protected function Execute(ICommand $command): Uuid|array|null
     {
         /** @var DeleteOrderCommand $command */
-
-        $this->deletedOrder = $this->orders->getById(OrderId::fromString($command->orderId));
-        $this->orders->delete(OrderId::fromString($command->orderId));
-
         return null;
     }
 
-    protected function GetAggregateRoot(): ?IAggregateRoot
-    {
-        return $this->deletedOrder;
-    }
 
     protected function ClearAggregateState(): void
     {

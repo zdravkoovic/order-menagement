@@ -29,16 +29,23 @@ class OrderlineEntity extends Model
      *
      * @var string
      */
-    protected $table = 'orderline_entities';
+    protected $table = 'orderlines';
 
-    public $incrementing = true;
+    // No auto-incrementing ID
+    public $incrementing = false;
 
-    protected $keyType = 'int';
+    // No single primary key
+    protected $primaryKey = null;
+
+    // UUID/string keys
+    protected $keyType = 'string';
 
     protected $fillable = [
         'product_id',
-        'quantity',
         'order_id',
+        'quantity',
+        'price',
+        'order_name',
         'created_at',
         'updated_at'
     ];

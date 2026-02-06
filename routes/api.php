@@ -1,8 +1,8 @@
 <?php
 
 use App\API\Controllers\OrderController;
-use App\API\Controllers\OrderlineController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('orders', OrderController::class);
-Route::apiResource('orderlines', OrderlineController::class);
+Route::post('orders/{id}/item', [OrderController::class, 'storeOrderItem']);
+Route::post('orders/{id}/item/remove', [OrderController::class, 'destroyOrderItem']);

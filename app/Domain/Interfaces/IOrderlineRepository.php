@@ -2,9 +2,8 @@
 
 namespace App\Domain\Interfaces;
 
+use App\Domain\OrderAggregate\ValueObjects\OrderlineId;
 use App\Domain\OrderlineAggregate\Orderline;
-use App\Domain\OrderlineAggregate\OrderlineId;
-use App\Infrastructure\Persistance\Models\OrderlineEntity;
 
 interface IOrderlineRepository
 {

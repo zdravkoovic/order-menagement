@@ -22787,6 +22787,49 @@ namespace Illuminate\Http {
             }
     }
 
+namespace Illuminate\Database\Schema {
+    /**
+     */
+    class Blueprint {
+        /**
+         * @see \Spatie\SchemalessAttributes\SchemalessAttributesServiceProvider::registeringPackage()
+         * @param string $columnName
+         * @static
+         */
+        public static function schemalessAttributes($columnName = 'schemaless_attributes')
+        {
+            return \Illuminate\Database\Schema\Blueprint::schemalessAttributes($columnName);
+        }
+
+            }
+    }
+
+namespace App\API\Http\Requests {
+    /**
+     */
+    class CreateOrderItem extends \Illuminate\Foundation\Http\FormRequest {
+            }
+    /**
+     */
+    class CreateOrderlineRequest extends \Illuminate\Foundation\Http\FormRequest {
+            }
+    /**
+     */
+    class CreateOrderRequest extends \Illuminate\Foundation\Http\FormRequest {
+            }
+    /**
+     */
+    class UpdateOrderlineRequest extends \Illuminate\Foundation\Http\FormRequest {
+            }
+    }
+
+namespace Illuminate\Foundation\Http {
+    /**
+     */
+    class FormRequest extends \Illuminate\Http\Request {
+            }
+    }
+
 
 namespace  {
     class App extends \Illuminate\Support\Facades\App {}

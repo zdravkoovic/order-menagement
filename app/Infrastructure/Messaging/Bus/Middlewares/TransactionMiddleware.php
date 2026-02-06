@@ -12,9 +12,9 @@ final class TransactionMiddleware implements IMiddleware
 {
     public function handle(IAction $action, callable $next): ?array
     {   
-        DB::transaction(function () use ($next, $action) {
+        $result = DB::transaction(function () use ($next, $action) {
             return $next($action);
         });
-        return null;
+        return $result;
     }
 }

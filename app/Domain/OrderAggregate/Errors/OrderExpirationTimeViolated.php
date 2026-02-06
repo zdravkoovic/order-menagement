@@ -3,8 +3,9 @@
 namespace App\Domain\OrderAggregate\Errors;
 
 use DateTimeImmutable;
+use DomainException;
 
-final class OrderExpirationTimeViolated extends \DomainException
+final class OrderExpirationTimeViolated extends DomainException
 {
     public function __construct(private readonly DateTimeImmutable $creationTime, private readonly DateTimeImmutable $expirationTime) 
     {

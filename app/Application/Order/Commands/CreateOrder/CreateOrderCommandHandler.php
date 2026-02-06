@@ -5,29 +5,32 @@ namespace App\Application\Order\Commands\CreateOrder;
 use App\Application\Abstraction\BaseCommandHandler;
 use App\Application\Abstraction\ICommand;
 use App\Application\Errors\InvalidRequestException;
+use App\Application\Errors\ProductNotFoundExcpetion;
+use App\Application\Errors\ServiceNotReachedException;
 use App\Application\Gateways\CustomerGateway;
+use App\Application\Gateways\ProductGateway;
+use App\Application\Interfaces\IOrderReadRepository;
+use App\Application\Order\Commands\UnpackingOrderItems;
 use App\Application\Order\ExpirationPolicy\GuestOrderExpirationPolicy;
 use App\Application\Order\ExpirationPolicy\RegisteredOrderExpirationPolicy;
-use App\Domain\IAggregateRoot;
-use App\Domain\Interfaces\IOrderRepository;
-use App\Domain\OrderAggregate\CustomerId;
+use App\Domain\OrderAggregate\Errors\DraftOrderDuplicateByCustomerException;
 use App\Domain\OrderAggregate\Order;
-use App\Domain\OrderAggregate\OrderBuilder;
-use App\Domain\OrderAggregate\OrderId;
+use App\Domain\OrderAggregate\ValueObjects\Customer;
+use App\Domain\OrderAggregate\ValueObjects\OrderId;
 use App\Domain\Shared\Uuid;
-use Symfony\Component\Clock\Clock;
+use DateTimeImmutable;
+use Illuminate\Http\Client\ConnectionException;
 
 final class CreateOrderCommandHandler extends BaseCommandHandler
 {
-    private ?Order $createdOrder;
     private ?OrderId $orderId;
 
     public function __construct(
-        private IOrderRepository $orderRepository,
+        private IOrderReadRepository $readRepos,
         private GuestOrderExpirationPolicy $guestOrderExpirationPolicy,
         private RegisteredOrderExpirationPolicy $registeredOrderExpirationPolicy,
-        private Clock $clock,
-        private CustomerGateway $gateway
+        private CustomerGateway $gateway,
+        private ProductGateway $productGateway
     ){
         parent::__construct();
     }
@@ -36,29 +39,47 @@ final class CreateOrderCommandHandler extends BaseCommandHandler
     {
         /** @var CreateOrderCommand $command */
 
-        if(!Uuid::isValid(Uuid::fromString($command->customerId))) throw new InvalidRequestException("Customer ID is invalid", 422);
-        if(!$this->gateway->exists($command->customerId)) throw new InvalidRequestException('Customer not found. Register first.', 422);
+        $products = $this->validateCustomerAndGetItems($command->customerId, $command->orderItems);
 
         $policy = $command->isGuest
             ? $this->guestOrderExpirationPolicy
             : $this->registeredOrderExpirationPolicy;
 
-        $this->createdOrder = OrderBuilder::draft()
-            ->forCustomer(CustomerId::fromString($command->customerId))
-            ->withExpirationTime($policy->expiresAt($this->clock->now()))
-            ->build();
-        $this->orderId = $this->orderRepository->save($this->createdOrder);
+        $this->orderId = OrderId::generate();
+        $customerId = Customer::fromString($command->customerId);
+        $expiresAt = $policy->expiresAt(new DateTimeImmutable());
+        $orderItems = UnpackingOrderItems::unpackingOrderItems($this->orderId, $command->orderItems, $products);
+
+        Order::retrieve($this->orderId->value())
+            ->createOrder($customerId, $expiresAt, $command->paymentMethod, $orderItems)
+            ->persist();
+        
         return $this->orderId->getId();
     }
-
-    protected function GetAggregateRoot(): IAggregateRoot | null
-    {
-        return $this->createdOrder ?? null;
-    }
-
+    
     protected function ClearAggregateState(): void
     {
-        $this->createdOrder = null;
         $this->orderId = null;
+    }
+
+    private function validateCustomerAndGetItems(string $customerId, ?array $items): ?array
+    {
+        if(!Uuid::isValid(Uuid::fromString($customerId))) throw new InvalidRequestException("Customer ID is invalid", 422);
+        $this->checkForDraftOrderDuplicate($customerId);
+        if (!$items) return null;
+
+        try {
+            $productIds = collect($items)->map(fn ($value) => $value['product_id'])->all();
+            $products = $this->productGateway->getProductPricesAndQuantities($productIds);
+            return $products;
+        } catch (ConnectionException $th) {
+            throw new ServiceNotReachedException($items, 'Waiting for the service. Please, try later.', $th);
+        }
+    }
+
+    private function checkForDraftOrderDuplicate(string $customerId): void
+    {
+        $order = $this->readRepos->findDraftOrderByCustomerId($customerId);
+        if($order !== null) throw new DraftOrderDuplicateByCustomerException($order->uuid(), $customerId);
     }
 }

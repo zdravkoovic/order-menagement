@@ -2,15 +2,14 @@
 
 namespace App\Domain\Shared;
 
-use InvalidArgumentException;
 use JsonSerializable;
 use Illuminate\Support\Str;
 
 final class Uuid implements JsonSerializable
 {
-    private string $value;
+    private ?string $value;
 
-    private function __construct(string $value)
+    public function __construct(string $value)
     {
         $this->value = $value;
     }

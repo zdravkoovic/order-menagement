@@ -2,38 +2,20 @@
 
 namespace App\Domain\OrderAggregate\Events;
 
-use App\Domain\Events\Abstraction\IDomainEvent;
-use App\Domain\OrderAggregate\Events\BaseOrderDomainEvent;
-use App\Domain\OrderAggregate\Order;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use App\Domain\OrderAggregate\ValueObjects\Customer;
+use App\Domain\OrderAggregate\ValueObjects\OrderState;
+use App\Domain\OrderAggregate\ValueObjects\PaymentMethod;
+use DateTimeImmutable;
+use Spatie\EventSourcing\StoredEvents\ShouldBeStored;
 
-class OrderCreated extends BaseOrderDomainEvent
+class OrderCreated extends ShouldBeStored
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(public Order $order)
+    public function __construct(
+        public string $customer_id,
+        public string $expires_at,
+        public ?string $payment_method = PaymentMethod::UNDEFINED->value,
+        public ?string $state = OrderState::DRAFT->value
+    )
     {
-        parent::__construct($order->id->getId());
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
     }
 }

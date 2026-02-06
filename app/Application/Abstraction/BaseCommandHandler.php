@@ -14,25 +14,10 @@ abstract class BaseCommandHandler implements ICommandHandler
     public function handle(ICommand $command) : Uuid | array | null
     {
         $result = $this->Execute($command);
-
-        if($result) {
-            $this->ClearAggregateState();
-            return $result;
-        }
-
-        $aggregate = $this->GetAggregateRoot();
-        if($aggregate != null)
-        {
-            foreach($aggregate->PopDomainEvents() as $event)
-            {
-                // $this->domainEventDispatcher->Dispatch($event);
-            }
-        }
-
+        
         return $result;
     }
 
     protected abstract function Execute(ICommand $command) : Uuid | array | null;
-    protected abstract function GetAggregateRoot() : IAggregateRoot | null;
     protected abstract function ClearAggregateState() : void;
 }

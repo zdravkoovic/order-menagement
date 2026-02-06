@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Messaging\Gateways;
 
+use App\Application\Errors\ProductNotFoundExcpetion;
 use App\Application\Gateways\ProductGateway;
 use App\Application\Orderline\DTOs\ProductPricesAndQuantities;
 use Illuminate\Http\Client\ConnectionException;
@@ -42,11 +43,11 @@ final class ProductHttpClient implements ProductGateway
                 $result = [];
                 foreach($data as $product) {
                     /** @var ProductPricesAndQuantities $product */
-                    $result[$product['productId']] = ["price" => $product['price'], "quantity" => $product['quantity']];
+                    $result[$product['productId']] = ["price" => $product['price'], "quantity" => $product['quantity'], 'name' => $product['name']];
                 }
                 return $result;
             }
-            return null;
+            throw new ProductNotFoundExcpetion($productIds[]);
         } catch(ConnectionException $e) {
             throw $e;
         }

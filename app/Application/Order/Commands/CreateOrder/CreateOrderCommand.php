@@ -13,7 +13,7 @@ final class CreateOrderCommand implements ICommand, IAction
     public function __construct(
         public readonly string $customerId,
         public readonly bool $isGuest,
-        public readonly ?float $amount = null,
+        public readonly ?array $orderItems = [],
         public readonly ?string $paymentMethod = null,
     ){
         $this->commandId = Uuid::generate();
@@ -31,7 +31,7 @@ final class CreateOrderCommand implements ICommand, IAction
             'command' => self::class,
             'customer_id' => $this->customerId,
             'is_guest' => $this->isGuest,
-            'amount' => $this->amount,
+            'order_items' => $this->orderItems,
             'payment_method' => $this->paymentMethod
         ];
     }

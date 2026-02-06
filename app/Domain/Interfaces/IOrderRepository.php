@@ -2,10 +2,10 @@
 
 namespace App\Domain\Interfaces;
 
-use App\Domain\OrderAggregate\CustomerId;
 use App\Domain\OrderAggregate\Order;
-use App\Domain\OrderAggregate\OrderId;
-use App\Domain\OrderAggregate\OrderState;
+use App\Domain\OrderAggregate\ValueObjects\OrderId;
+use App\Domain\OrderAggregate\ValueObjects\OrderState;
+use App\Domain\Shared\Uuid;
 use DateTimeImmutable;
 
 interface IOrderRepository
@@ -24,7 +24,7 @@ interface IOrderRepository
     public function update(Order $order) : Order;
     public function delete(OrderId $id) : void;
 
-    public function findOrderStateForCustomer(CustomerId $id) : ?OrderState;
+    public function findOrderStateForCustomer(Uuid $id) : ?OrderState;
 
     public function findExpiratedOrderDrafts(DateTimeImmutable $now, ?int $limit = 500) : iterable;
 
